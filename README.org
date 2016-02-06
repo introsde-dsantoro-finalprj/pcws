@@ -1,9 +1,9 @@
 * Deployment
 ** Requirements
-   Import the wsdl classes from dbws:
+   Import the wsdl classes from storagews:
    #+BEGIN_EXAMPLE
-   rm -rf src/introsde/dsantoro/pcws
-   wsimport -keep http://192.168.5.3:6903/ws/pcws?wsdl
+   rm -rf src/introsde/dsantoro/storagews
+   wsimport -keep http://192.168.5.3:6903/ws/storagews?wsdl
    #+END_EXAMPLE
 ** Instruction
   1) Deploy on Heroku
