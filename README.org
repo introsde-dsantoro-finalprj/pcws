@@ -1,0 +1,28 @@
+* Deployment
+** Requirements
+   Import the wsdl classes from dbws:
+   #+BEGIN_EXAMPLE
+   rm -rf src/introsde/dsantoro/pcws
+   wsimport -keep http://192.168.5.3:6903/ws/pcws?wsdl
+   #+END_EXAMPLE
+** Instruction
+  1) Deploy on Heroku
+     #+BEGIN_EXAMPLE
+     heroku login
+     heroku create --stack cedar --buildpack https://github.com/IntroSDE/heroku-buildpack-ant.git
+     git push heroku master
+     heroku open
+     #+END_EXAMPLE
+  2) Server
+     #+BEGIN_EXAMPLE
+     ant install
+     ant start
+     #+END_EXAMPLE
+  3) Test client  
+     #+BEGIN_EXAMPLE
+     export STGWS_PORT=6903
+     export STGWS_HOST=192.168.5.3
+     ant execute.test
+     #+END_EXAMPLE
+     
+     

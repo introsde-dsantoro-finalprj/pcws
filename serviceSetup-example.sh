@@ -1,0 +1,5 @@
+#!/bin/bash
+export STGWS_ENDPOINT=192.168.5.3
+export STGWS_PORT=6903
+export BLWS_ENDPOINT=192.168.5.3
+export BLWS_PORT=6906
