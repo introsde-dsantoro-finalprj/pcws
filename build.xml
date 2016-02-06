@@ -104,8 +104,8 @@
             </copy>
         </target>
         <target name="start">
-            <echo message="app start introsde.dsantoro.endpoint.PcentricwsPublisher in ${build.dir}" />
-            <java classname="introsde.dsantoro.endpoint.PcentricwsPublisher" classpath="${build.dir}" fork="true">
+            <echo message="app start introsde.dsantoro.endpoint.PcwsPublisher in ${build.dir}" />
+            <java classname="introsde.dsantoro.endpoint.PcwsPublisher" classpath="${build.dir}" fork="true">
                 <arg value="$JAVA_OPTS  -cp" />
                 <classpath>
                     <path location="build" />
