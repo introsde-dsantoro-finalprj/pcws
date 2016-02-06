@@ -6,7 +6,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import introsde.dsantoro.storagews.Meal;
+import introsde.dsantoro.dbws.Meal;
 
 @XmlRootElement(name="meals")
 public class MealStore {

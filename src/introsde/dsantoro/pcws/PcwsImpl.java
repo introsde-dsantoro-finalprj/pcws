@@ -82,7 +82,7 @@ public class PcwsImpl implements Pcws {
 	}
 
 	@Override
-	public Collection<Meal> searchMeals(String searchKey, int start, int quantity) {		
-		return blws.searchFoods(searchKey, start, quantity);
+	public Collection<Meal> searchMeals(String searchKey, int start, int quantity) {
+		return storagews.searchMeals(searchKey, start, quantity);		
 	}
 }

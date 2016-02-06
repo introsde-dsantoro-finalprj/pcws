@@ -15,7 +15,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.glassfish.jersey.client.ClientConfig;
 
-import introsde.dsantoro.storagews.Meal;
+import introsde.dsantoro.dbws.Meal;
 
 public class Blws {
 	
@@ -33,10 +33,10 @@ public class Blws {
 			ClientConfig clientConfig = new ClientConfig();
 	        Client client = ClientBuilder.newClient(clientConfig);
 	        service = client.target(getBaseURI());
-	        System.out.println("Adpws config: Got a valid endpoint: " + getBaseURI().toString());
+	        System.out.println("Blws config: Got a valid endpoint: " + getBaseURI().toString());
 		}
 		else {
-			System.out.println("ERROR in Adpws config: Wrong endpoint: " + getBaseURI().toString());
+			System.out.println("ERROR in Blws config: Wrong endpoint: " + getBaseURI().toString());
 		}
 	}
 	
