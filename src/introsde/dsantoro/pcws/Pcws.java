@@ -75,4 +75,7 @@ public interface Pcws {
 	@WebResult(name="meal") 
 	public Collection<Meal> searchMeals(@WebParam(name="searchKey") String searchKey, @WebParam(name="start") int start, @WebParam(name="quantity") int quantity);
 	
+	@WebMethod(operationName="checkGoal")
+	@WebResult(name="goalEvalJson") 
+	public String checkGoal(@WebParam(name="personId") Long personId);
 }

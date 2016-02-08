@@ -1,8 +1,15 @@
 package introsde.dsantoro.pcws;
 
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
 
 import javax.jws.WebService;
+import javax.xml.datatype.XMLGregorianCalendar;
+
+import org.json.JSONObject;
 
 import introsde.dsantoro.blws.Blws;
 import introsde.dsantoro.dbws.Activity;
@@ -15,7 +22,7 @@ import introsde.dsantoro.storagews.Storagews;
 public class PcwsImpl implements Pcws {
 	private Storagews storagews;
 	private Blws blws;
-	
+
 	public PcwsImpl(Storagews storagews, Blws blws) {
 		this.storagews = storagews;
 		this.blws = blws;
@@ -84,5 +91,64 @@ public class PcwsImpl implements Pcws {
 	@Override
 	public Collection<Meal> searchMeals(String searchKey, int start, int quantity) {
 		return storagews.searchMeals(searchKey, start, quantity);		
+	}
+
+	@Override
+	public String checkGoal(Long personId) {
+		Person person = storagews.readPerson(personId);		
+		JSONObject personCalSummary = getJsonCaloriesSummary(person);
+		return blws.checkGoal(personCalSummary).toString();		
+	}
+
+	private JSONObject getJsonCaloriesSummary(Person person) {
+
+		ArrayList<Integer> takenList = new ArrayList<Integer>();
+		ArrayList<Integer> burnedList = new ArrayList<Integer>();		
+		Calendar today = Calendar.getInstance();
+		today.setTime(new Date());
+		// Calories taken
+		Iterator<Meal> im = person.getMeals().getMeal().iterator();	
+		if (im.hasNext()) {
+			while(im.hasNext()){
+				Meal m = im.next();				
+				if (sameDay(m.getDatetime(),today)){
+					takenList.add(im.next().getCalories());
+				}
+			}
+		}
+
+		// Calories burned		
+		Iterator<Activity> ia = person.getActivities().getActivity().iterator();	
+		if (ia.hasNext()) {
+			while(ia.hasNext()){
+				Activity a = ia.next();				
+				if (sameDay(a.getDatetime(),today)){
+					burnedList.add(ia.next().getCalories());
+				}
+			}
+		}
+		burnedList.add(person.getDaycalories());
+
+		// Today Goal
+		Integer todayGoal = 0;
+		Iterator<Goal> ig = person.getGoals().getGoal().iterator();	
+		if (ig.hasNext()) {
+			while(ia.hasNext()){
+				Activity a = ia.next();				
+				if (sameDay(a.getDatetime(),today)){
+					todayGoal = ia.next().getCalories();
+				}
+			}
+		}
+
+		JSONObject caloriesSummary = new JSONObject();
+		caloriesSummary.put("todayGoal", todayGoal);
+		caloriesSummary.put("calTaken", takenList);
+		caloriesSummary.put("calBurned", burnedList);
+		return caloriesSummary;
+	}
+
+	private boolean sameDay(XMLGregorianCalendar d1, Calendar d2) {
+		return ( (d1.getYear() == d2.get(Calendar.YEAR)) && (d1.getMonth() == d2.get(Calendar.MONTH)+1) && (d1.getDay() == d2.get(Calendar.DAY_OF_MONTH)) );
 	}
 }

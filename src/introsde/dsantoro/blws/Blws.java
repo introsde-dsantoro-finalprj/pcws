@@ -6,29 +6,33 @@ import java.util.Collection;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.UriBuilder;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.glassfish.jersey.client.ClientConfig;
+import org.json.JSONObject;
 
 import introsde.dsantoro.dbws.Meal;
 
 public class Blws {
 	
 	private WebTarget service;
-	private String adpwsPort = null;
-	private String adpwsEndpoint = null;
+	private String blwsPort = null;
+	private String blwsEndpoint = null;
+	private final String SERVICE_BASEPATH = "ws/blws/";
 	
-	public Blws(String adpwsEndpoint, String adpwsPort) {
-		this.adpwsPort = adpwsPort;
-		this.adpwsEndpoint = adpwsEndpoint;
+	public Blws(String blwsEndpoint, String blwsPort) {
+		this.blwsPort = blwsPort;
+		this.blwsEndpoint = blwsEndpoint;
 		
-		// Check adpws service settings
-		if ( (this.adpwsPort != null) && (this.adpwsEndpoint != null) ) {
+		// Check blws service settings
+		if ( (this.blwsPort != null) && (this.blwsEndpoint != null) ) {
 			// Setup service
 			ClientConfig clientConfig = new ClientConfig();
 	        Client client = ClientBuilder.newClient(clientConfig);
@@ -41,12 +45,12 @@ public class Blws {
 	}
 	
 	private URI getBaseURI() {
-        return UriBuilder.fromUri("http://" + adpwsEndpoint + ":" + adpwsPort).build();
+        return UriBuilder.fromUri("http://" + blwsEndpoint + ":" + blwsPort).build();
     }
 	
 	public Collection<Meal> searchFoods(String key, int start, int num) {
 		Collection<Meal> meals = null;
-		String response = service.path("ws/adpws/meals")
+		String response = service.path(SERVICE_BASEPATH)
 		        .queryParam("key",key)
 		        .queryParam("start",start)
 		        .queryParam("n",num)
@@ -63,4 +67,41 @@ public class Blws {
 		}		
 		return meals;
 	}
+	
+	public JSONObject checkGoal(JSONObject checkGoalJson) {
+//		String jsonString = "{\"calBurned\": [1500],\"calTaken\": [2500],\"todayGoal\": 50}";
+//		checkGoalJson = new JSONObject(jsonString); 
+		JSONObject goalEval = null;
+		Response response = service.path("ws/blws/goalcheck")		        
+		        .request().accept(MediaType.APPLICATION_JSON).post(Entity.json(checkGoalJson.toString()));		
+		if (response.getStatus() == 201){
+			URI goalEvalURI = response.getLocation();
+			goalEval = getGoalCheckResource(goalEvalURI);			
+		}
+		else {
+			System.err.println("ERROR: Resource cehckGoal not created. Status returned: " + response.getStatus());		
+		}
+		return goalEval;
+	}
+
+	private JSONObject getGoalCheckResource(URI goalEvalURI) {
+		Response response = service.path(goalEvalURI.getPath())		        
+		        .request().accept(MediaType.APPLICATION_JSON).get();		
+		String goalCheck = response.readEntity(String.class);
+		JSONObject goalCheckJSon = new JSONObject(goalCheck);
+		JSONObject link = (JSONObject) goalCheckJSon.get("link");
+		String goalEvalPath = (String) link.get("uri");		
+		//return getGoalEvalResource(goalEvalPath.replace(SERVICE_BASEPATH, ""));
+		return getGoalEvalResource(goalEvalPath);
+	}
+
+	private JSONObject getGoalEvalResource(String goealEvalPath) {
+		Response response = service.path(goealEvalPath)		        
+		        .request().accept(MediaType.APPLICATION_JSON).get();		
+		String goalEval = response.readEntity(String.class);
+		JSONObject goalEvalJSon = new JSONObject(goalEval);			
+		return goalEvalJSon;
+	}
+	
+	
 }
