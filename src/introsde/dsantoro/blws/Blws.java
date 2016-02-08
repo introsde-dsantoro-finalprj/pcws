@@ -69,8 +69,6 @@ public class Blws {
 	}
 	
 	public JSONObject checkGoal(JSONObject checkGoalJson) {
-//		String jsonString = "{\"calBurned\": [1500],\"calTaken\": [2500],\"todayGoal\": 50}";
-//		checkGoalJson = new JSONObject(jsonString); 
 		JSONObject goalEval = null;
 		Response response = service.path("ws/blws/goalcheck")		        
 		        .request().accept(MediaType.APPLICATION_JSON).post(Entity.json(checkGoalJson.toString()));		

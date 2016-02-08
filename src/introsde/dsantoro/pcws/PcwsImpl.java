@@ -112,7 +112,7 @@ public class PcwsImpl implements Pcws {
 			while(im.hasNext()){
 				Meal m = im.next();				
 				if (sameDay(m.getDatetime(),today)){
-					takenList.add(im.next().getCalories());
+					takenList.add(m.getCalories());
 				}
 			}
 		}
@@ -123,7 +123,7 @@ public class PcwsImpl implements Pcws {
 			while(ia.hasNext()){
 				Activity a = ia.next();				
 				if (sameDay(a.getDatetime(),today)){
-					burnedList.add(ia.next().getCalories());
+					burnedList.add(a.getCalories());
 				}
 			}
 		}
@@ -133,10 +133,10 @@ public class PcwsImpl implements Pcws {
 		Integer todayGoal = 0;
 		Iterator<Goal> ig = person.getGoals().getGoal().iterator();	
 		if (ig.hasNext()) {
-			while(ia.hasNext()){
-				Activity a = ia.next();				
-				if (sameDay(a.getDatetime(),today)){
-					todayGoal = ia.next().getCalories();
+			while(ig.hasNext()){
+				Goal g = ig.next();				
+				if (sameDay(g.getDay(),today)){
+					todayGoal = g.getCalories();
 				}
 			}
 		}
